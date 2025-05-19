@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok HYPERSPACE MOD</title>
+    <title>TIKTOK HYPER MOD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
             --neon-cyan: #00f3ff;
@@ -24,225 +23,257 @@
             color: #fff;
             font-family: 'Orbitron', sans-serif;
             min-height: 100vh;
-            overflow-x: hidden;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="%2300f3ff" opacity="0.8"/></svg>'), auto;
+            overflow: hidden;
+            position: relative;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="%2300f3ff" /></svg>'), auto;
         }
 
-        #canvas-container {
+        /* Квантовый фон */
+        .quantum-bg {
             position: fixed;
-            width: 100%;
-            height: 100%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(0, 243, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 70% 70%, rgba(255, 0, 255, 0.1) 0%, transparent 20%);
+            animation: quantum 20s linear infinite;
+            z-index: -2;
+        }
+
+        /* Голографический контейнер */
+        .container {
+            opacity: 0;
+            transform: perspective(1000px) rotateX(25deg) scale(0.9);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 600px;
+            width: 90%;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 80px rgba(0, 243, 255, 0.4),
+                        inset 0 0 50px rgba(255, 0, 255, 0.3);
+            padding: 40px;
+            border-radius: 30px;
+            margin: 20px auto;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent, 
+                var(--neon-cyan),
+                transparent,
+                var(--neon-pink)
+            );
+            animation: hologram 6s linear infinite;
             z-index: -1;
         }
 
-        .content {
-            position: relative;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1.5s ease-out;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .content.show {
+        .container.show {
             opacity: 1;
-            transform: translateY(0);
+            transform: perspective(1000px) rotateX(0) scale(1);
         }
 
-        .cyber-card {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid var(--neon-cyan);
-            border-radius: 20px;
-            padding: 2.5rem;
-            backdrop-filter: blur(15px);
-            box-shadow: 0 0 50px rgba(0, 243, 255, 0.3),
-                        inset 0 0 30px rgba(255, 0, 255, 0.2);
-            margin: 2rem 0;
-            transform-style: preserve-3d;
-        }
-
-        .hologram-logo {
-            font-size: 4.5rem;
-            text-align: center;
-            margin: 2rem 0;
+        /* Логотип с квантовым свечением */
+        .logo {
+            font-size: 100px;
+            color: transparent;
             background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
             -webkit-background-clip: text;
             background-clip: text;
-            color: transparent;
-            animation: hologram-pulse 3s infinite alternate;
+            text-shadow: 0 0 50px var(--neon-pink),
+                         0 0 100px var(--neon-cyan);
+            margin-bottom: 30px;
+            animation: logo-pulse 2s infinite alternate;
         }
 
-        .cyber-button {
+        /* Кнопка с плазменным эффектом */
+        .hyper-button {
             position: relative;
-            display: inline-block;
-            padding: 1.2rem 3rem;
-            font-size: 1.2rem;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid var(--neon-cyan);
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid transparent;
             color: var(--neon-cyan);
-            border-radius: 50px;
+            padding: 20px 50px;
+            font-size: 24px;
             cursor: pointer;
             transition: all 0.4s;
-            overflow: hidden;
+            margin: 30px 0;
+            border-radius: 50px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 1.5rem 0;
+            letter-spacing: 3px;
+            overflow: hidden;
+            z-index: 2;
         }
 
-        .cyber-button:hover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.5);
-            transform: translateY(-3px);
+        .hyper-button::before {
+            content: '';
+            position: absolute;
+            top: -150%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                var(--neon-cyan),
+                var(--neon-pink),
+                var(--neon-cyan)
+            );
+            animation: rotate 3s linear infinite;
+            z-index: -1;
         }
 
-        .matrix-list {
-            list-style: none;
-            margin: 2rem 0;
+        .hyper-button:hover {
+            text-shadow: 0 0 15px var(--neon-cyan),
+                         0 0 30px var(--neon-pink);
+            box-shadow: 0 0 60px rgba(0, 243, 255, 0.6),
+                       inset 0 0 20px rgba(255, 0, 255, 0.4);
+            transform: translateY(-5px) scale(1.1);
         }
 
-        .matrix-list li {
-            padding: 1rem;
-            margin: 1rem 0;
+        /* Список версий с 3D-эффектом */
+        .versions {
+            margin-top: 40px;
+            border-top: 2px solid rgba(0, 243, 255, 0.4);
+            padding-top: 30px;
+        }
+
+        .version-item {
+            padding: 20px;
+            margin: 20px 0;
             background: rgba(0, 243, 255, 0.05);
-            border-left: 3px solid var(--neon-cyan);
-            transition: all 0.3s;
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            border-radius: 15px;
+            transition: all 0.4s;
             cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
         }
 
-        .matrix-list li:hover {
+        .version-item:hover {
             background: rgba(0, 243, 255, 0.1);
-            transform: translateX(20px);
+            transform: translateX(30px) rotateY(15deg);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.3);
         }
 
-        @keyframes hologram-pulse {
-            0% { text-shadow: 0 0 20px var(--neon-cyan); }
-            50% { text-shadow: 0 0 50px var(--neon-pink); }
-            100% { text-shadow: 0 0 20px var(--neon-cyan); }
+        /* Анимации */
+        @keyframes quantum {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes hologram {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes logo-pulse {
+            0% { filter: hue-rotate(0deg) brightness(1); }
+            100% { filter: hue-rotate(360deg) brightness(1.5); }
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Эффект частиц */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 5s infinite linear;
+            filter: drop-shadow(0 0 5px var(--neon-cyan));
         }
     </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
-    
-    <div class="content">
-        <div class="cyber-card">
-            <div class="hologram-logo">
-                <i class="fab fa-tiktok"></i>
-            </div>
-            
-            <h1 style="text-align: center; color: var(--neon-pink); margin-bottom: 2rem;">
-                HYPERSPACE MOD
-                <div style="font-size: 1rem; color: var(--neon-cyan); margin-top: 1rem;">для TikTok</div>
-            </h1>
+    <div class="quantum-bg"></div>
+    <div class="particles" id="particles"></div>
 
-            <a href="https://t.me/c/2671032710/4" class="cyber-button" id="downloadBtn">
-                <i class="fas fa-rocket"></i> УСТАНОВИТЬ СЕЙЧАС
-            </a>
+    <div class="container">
+        <div class="logo">
+            <i class="fab fa-tiktok"></i>
+        </div>
+        
+        <h1 style="color: var(--neon-pink); margin-bottom: 20px;">
+            HYPER MOD<br>
+            <span style="color: var(--neon-cyan); font-size: 0.8em;">для TikTok</span>
+        </h1>
 
-            <ul class="matrix-list">
-                <li>🔹 Версия 12.0 (Квантовый ускоритель)</li>
-                <li>🔸 Версия 11.5 (Нейронная сеть)</li>
-                <li>🔹 Версия 10.0 (Голографический интерфейс)</li>
-            </ul>
+        <p style="color: #fff; margin: 30px 0; line-height: 1.8;">
+            <span style="color: var(--neon-cyan);">✓</span> Без ограничений<br>
+            <span style="color: var(--neon-pink);">✓</span> 4K/60FPS видео<br>
+            <span style="color: var(--neon-cyan);">✓</span> Все эффекты разблокированы<br>
+            <span style="color: var(--neon-pink);">✓</span> Анонимный режим
+        </p>
 
-            <div style="text-align: center; color: var(--neon-cyan); margin-top: 2rem;">
-                <div id="particles-count" style="font-size: 0.9rem;"></div>
-            </div>
+        <a href="https://t.me/c/2671032710/4" class="hyper-button" id="downloadButton">
+            <i class="fas fa-rocket"></i> Скачать сейчас
+        </a>
+
+        <div class="versions">
+            <div class="version-item">HYPER-MOD 12.0 (Квант)</div>
+            <div class="version-item">HYPER-MOD 11.5 (Нейрон)</div>
+            <div class="version-item">HYPER-MOD 10.0 (Плазма)</div>
         </div>
     </div>
 
     <script>
-        // Инициализация 3D-фона
-        const initThreeJS = () => {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-            // Создание частиц
-            const particles = new THREE.BufferGeometry();
-            const particleCount = 5000;
-            const posArray = new Float32Array(particleCount * 3);
-
-            for(let i = 0; i < particleCount * 3; i++) {
-                posArray[i] = (Math.random() - 0.5) * 10;
+        // Инициализация частиц
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 100; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = Math.random() * 5 + 2 + 'px';
+                particle.style.animationDuration = Math.random() * 3 + 2 + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(particle);
             }
+        }
 
-            particles.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-            const material = new THREE.PointsMaterial({
-                size: 0.005,
-                color: new THREE.Color(var(--neon-cyan)),
-                transparent: true
-            });
-
-            const particleMesh = new THREE.Points(particles, material);
-            scene.add(particleMesh);
-
-            camera.position.z = 2;
-
-            // Анимация
-            const animate = () => {
-                requestAnimationFrame(animate);
-                particleMesh.rotation.x += 0.001;
-                particleMesh.rotation.y += 0.001;
-                renderer.render(scene, camera);
-            };
-            animate();
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        };
+        // 3D-эффект при движении мыши
+        document.addEventListener('mousemove', (e) => {
+            const container = document.querySelector('.container');
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            container.style.transform = `
+                perspective(1000px)
+                rotateX(${y}deg)
+                rotateY(${x}deg)
+                translateZ(50px)
+            `;
+        });
 
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
-            initThreeJS();
+            createParticles();
             setTimeout(() => {
-                document.querySelector('.content').classList.add('show');
+                document.querySelector('.container').classList.add('show');
             }, 500);
-
-            // Интерактивные эффекты
-            const buttons = document.querySelectorAll('.cyber-button');
-            buttons.forEach(btn => {
-                btn.addEventListener('mousemove', e => {
-                    const rect = btn.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    btn.style.setProperty('--x', `${x}px`);
-                    btn.style.setProperty('--y', `${y}px`);
-                });
-            });
-
-            // Статистика частиц
-            let particles = 0;
-            const counter = document.getElementById('particles-count');
-            setInterval(() => {
-                particles += Math.floor(Math.random() * 100);
-                counter.textContent = `⚡ Квантовых частиц: ${particles.toLocaleString()}`;
-            }, 100);
         });
 
-        // Звуковые эффекты
-        document.getElementById('downloadBtn').addEventListener('click', e => {
+        // Звуковой эффект (нужно разрешение)
+        document.getElementById('downloadButton').addEventListener('click', (e) => {
             e.preventDefault();
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-
-            oscillator.start();
+            const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-digital-sci-fi-click-276.mp3');
+            audio.play();
             setTimeout(() => {
-                oscillator.stop();
                 window.location.href = e.target.href;
             }, 300);
         });
