@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok HYPERSPACE MOD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ff;
+            --matrix: #0aff0a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="%2300f3ff" opacity="0.8"/></svg>'), auto;
+        }
+
+        #canvas-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .content {
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1.5s ease-out;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cyber-card {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.3),
+                        inset 0 0 30px rgba(255, 0, 255, 0.2);
+            margin: 2rem 0;
+            transform-style: preserve-3d;
+        }
+
+        .hologram-logo {
+            font-size: 4.5rem;
+            text-align: center;
+            margin: 2rem 0;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: hologram-pulse 3s infinite alternate;
+        }
+
+        .cyber-button {
+            position: relative;
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 1.5rem 0;
+        }
+
+        .cyber-button:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .matrix-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .matrix-list li {
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(0, 243, 255, 0.05);
+            border-left: 3px solid var(--neon-cyan);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .matrix-list li:hover {
+            background: rgba(0, 243, 255, 0.1);
+            transform: translateX(20px);
+        }
+
+        @keyframes hologram-pulse {
+            0% { text-shadow: 0 0 20px var(--neon-cyan); }
+            50% { text-shadow: 0 0 50px var(--neon-pink); }
+            100% { text-shadow: 0 0 20px var(--neon-cyan); }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div class="content">
+        <div class="cyber-card">
+            <div class="hologram-logo">
+                <i class="fab fa-tiktok"></i>
+            </div>
+            
+            <h1 style="text-align: center; color: var(--neon-pink); margin-bottom: 2rem;">
+                HYPERSPACE MOD
+                <div style="font-size: 1rem; color: var(--neon-cyan); margin-top: 1rem;">для TikTok</div>
+            </h1>
+
+            <a href="https://t.me/c/2671032710/4" class="cyber-button" id="downloadBtn">
+                <i class="fas fa-rocket"></i> УСТАНОВИТЬ СЕЙЧАС
+            </a>
+
+            <ul class="matrix-list">
+                <li>🔹 Версия 12.0 (Квантовый ускоритель)</li>
+                <li>🔸 Версия 11.5 (Нейронная сеть)</li>
+                <li>🔹 Версия 10.0 (Голографический интерфейс)</li>
+            </ul>
+
+            <div style="text-align: center; color: var(--neon-cyan); margin-top: 2rem;">
+                <div id="particles-count" style="font-size: 0.9rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация 3D-фона
+        const initThreeJS = () => {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Создание частиц
+            const particles = new THREE.BufferGeometry();
+            const particleCount = 5000;
+            const posArray = new Float32Array(particleCount * 3);
+
+            for(let i = 0; i < particleCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+
+            particles.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const material = new THREE.PointsMaterial({
+                size: 0.005,
+                color: new THREE.Color(var(--neon-cyan)),
+                transparent: true
+            });
+
+            const particleMesh = new THREE.Points(particles, material);
+            scene.add(particleMesh);
+
+            camera.position.z = 2;
+
+            // Анимация
+            const animate = () => {
+                requestAnimationFrame(animate);
+                particleMesh.rotation.x += 0.001;
+                particleMesh.rotation.y += 0.001;
+                renderer.render(scene, camera);
+            };
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
+            setTimeout(() => {
+                document.querySelector('.content').classList.add('show');
+            }, 500);
+
+            // Интерактивные эффекты
+            const buttons = document.querySelectorAll('.cyber-button');
+            buttons.forEach(btn => {
+                btn.addEventListener('mousemove', e => {
+                    const rect = btn.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    btn.style.setProperty('--x', `${x}px`);
+                    btn.style.setProperty('--y', `${y}px`);
+                });
+            });
+
+            // Статистика частиц
+            let particles = 0;
+            const counter = document.getElementById('particles-count');
+            setInterval(() => {
+                particles += Math.floor(Math.random() * 100);
+                counter.textContent = `⚡ Квантовых частиц: ${particles.toLocaleString()}`;
+            }, 100);
+        });
+
+        // Звуковые эффекты
+        document.getElementById('downloadBtn').addEventListener('click', e => {
+            e.preventDefault();
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+
+            oscillator.start();
+            setTimeout(() => {
+                oscillator.stop();
+                window.location.href = e.target.href;
+            }, 300);
+        });
+    </script>
+</body>
+</html>
